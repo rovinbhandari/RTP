@@ -10,7 +10,8 @@ sleep 2s
 echo "Starting up $nclients Clients..."
 for (( i = 1; i <= $nclients; i++ ))
 do
-	( ./client_udp.c.out & )
+	echo "Firing up Client #$i..."
+	( ./client_udp.c.out /home/rovin/Dropbox/playlist.m3u & )
 done
 
 echo "Wait for processes to complete..."

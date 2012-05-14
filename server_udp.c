@@ -1,6 +1,4 @@
-#include "commons.h"
-
-#define	ID	"SERVER=> "
+#include "server_udp.h"
 
 int main(void)
 {
@@ -30,7 +28,7 @@ int main(void)
 		fflush(stdout);
 		
 		char reply[LENBUFFER];
-		sprintf(reply, "Packet received, Mr. %d.", port_client);
+		sprintf(reply, "Last modified timestamp is: %s", timestamp(data));
 		if(sendto(socket_fd, reply, strlen(reply) + 1, 0, (struct sockaddr*) &sin_client, size_sockaddr) == -1)
 			er("sendto()", 4);
 	}

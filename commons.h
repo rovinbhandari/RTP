@@ -22,6 +22,7 @@
 		bind()
 		recvfrom()
 		sendto()
+		stat()
 */
 
 #include <sys/socket.h>
@@ -63,6 +64,7 @@
 	for:
 		memset()
 		strlen()
+		strcpy()
 */
 
 #include <unistd.h>
@@ -70,6 +72,7 @@
 	for:
 		close()
 		sleep()
+		stat()
 */
 
 #define	LENBUFFER	512

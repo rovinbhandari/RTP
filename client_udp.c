@@ -1,13 +1,12 @@
-#include "commons.h"
+#include "client_udp.h"
 
-#define	NPACKETS	5
-#define IPSERVER	"127.0.0.1"
-#define	ID		"CLIENT=> "
-
-int main(void)
+int main(int argc, char* argv[])
 {
+	if(argc != 2)
+		er("incorrect usage", -1);
+		
 	struct sockaddr_in sin_server;
-	int size_sockaddr = sizeof(struct sockaddr), socket_fd, i;
+	int size_sockaddr = sizeof(struct sockaddr), socket_fd;
 	char data[LENBUFFER];
 
 	if((socket_fd = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
@@ -22,22 +21,17 @@ int main(void)
 
 	printf(ID "UDP Client started up. Attempting communication with server @ %s:%d...\n\n", IPSERVER, PORTSERVER);
 
-	for(i = 1; i <= NPACKETS; i++)
-	{
-		sprintf(data, "data(%d/%d)\0", i, NPACKETS);
-		printf(ID "Sending packet %d of %d with data: \"%s\" ...\n", i, NPACKETS, data);
-		fflush(stdout);
-		if(sendto(socket_fd, data, strlen(data) + 1, 0, (struct sockaddr*) &sin_server, size_sockaddr) == -1)
-			er("sendto()", 3);
-		
-		if(recvfrom(socket_fd, data, LENBUFFER, 0, (struct sockaddr*) &sin_server, &size_sockaddr) == -1)
-			er("recvfrom()", 4);
-		printf(ID "Reply from Server: \"%s\"\n\n", data);
-		fflush(stdout);
-		
-		sleep(2);	// better is to make the argument a variable in the window [1, 2] E |R
-	}
-
+	strcpy(data, argv[1]);
+	printf(ID "Sending packet with data: \"%s\" ...\n", data);
+	fflush(stdout);
+	if(sendto(socket_fd, data, strlen(data) + 1, 0, (struct sockaddr*) &sin_server, size_sockaddr) == -1)
+		er("sendto()", 3);
+	
+	if(recvfrom(socket_fd, data, LENBUFFER, 0, (struct sockaddr*) &sin_server, &size_sockaddr) == -1)
+		er("recvfrom()", 4);
+	printf(ID "Reply from Server: %s\n\n", data);
+	fflush(stdout);
+	
 	close(socket_fd);
 
 	return 0;
