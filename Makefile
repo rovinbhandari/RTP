@@ -1,7 +1,7 @@
 all:	server_udp.c.out client_udp.c.out
 
 server_udp.c.out:	server_udp.o server_udp_functions.o commons_functions.o
-	gcc server_udp.o server_udp_functions.o commons_functions.o -o server_udp.c.out
+	gcc -lpthread server_udp_functions.o commons_functions.o server_udp.o -o server_udp.c.out
 
 client_udp.c.out:	client_udp.o commons_functions.o
 	gcc client_udp.o commons_functions.o -o client_udp.c.out
