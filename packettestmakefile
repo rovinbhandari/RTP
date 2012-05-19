@@ -1,0 +1,16 @@
+all:	packettest.c.out
+
+packettest.c.out:	commons_functions.o packettest.o
+	gcc commons_functions.o packettest.o -o packettest.c.out
+
+commons_functions.o:	commons_functions.c
+	gcc -c commons_functions.c -o commons_functions.o
+
+packettest.o:	packettest.c
+	gcc -c packettest.c -o packettest.o
+
+clean:
+	rm -f packettest.c.out
+	rm -f commons_functions.o
+	rm -f packettest.o
+

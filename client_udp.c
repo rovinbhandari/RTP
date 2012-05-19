@@ -7,7 +7,7 @@ int main(int argc, char* argv[])
 		
 	// BEGIN: initialization
 	struct sockaddr_in sin_server;
-	int size_sockaddr = sizeof(struct sockaddr), socket_fd;
+	int size_sockaddr = sizeof(struct sockaddr) /* make into size_t */, socket_fd;
 	char data[LENBUFFER];
 
 	if((socket_fd = socket(AF_INET, SOCK_DGRAM, 0)) == -1)

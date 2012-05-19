@@ -57,6 +57,7 @@
 /*
 	for:
 		exit()
+		malloc()
 */
 
 #include <string.h>
@@ -75,8 +76,13 @@
 		stat()
 */
 
-#define	LENBUFFER	512
+#define	LENBUFFER	500
 #define	PORTSERVER	8484
+
+#define	REQU		1
+#define RACK		2
+#define	DONE		3
+#define	DACK		4
 
 #define	er(e, x)					\
 	do						\
@@ -85,4 +91,15 @@
 		exit(x);				\
 	}						\
 	while(0)
+
+struct packet
+{
+	short int conid;
+	short int type;
+	short int status;
+	char buffer[LENBUFFER];
+};
+
+struct packet* ntohp(struct packet*);
+struct packet* htonp(struct packet*);
 

@@ -4,7 +4,7 @@ int main(void)
 {
 	// BEGIN: initialization
 	struct sockaddr_in sin_server, sin_client;
-	int socket_fd, size_sockaddr = sizeof(struct sockaddr), port_client;
+	int socket_fd, size_sockaddr = sizeof(struct sockaddr) /* make into size_t */, port_client;
 	char data[LENBUFFER], path[LENBUFFER];
 
 	if((socket_fd = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
