@@ -1,0 +1,3 @@
+make Makefile generic (as in FTP).
+sockaddr_in for client can be removed from client_info.
+
