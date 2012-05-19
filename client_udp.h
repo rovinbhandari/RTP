@@ -1,6 +1,5 @@
 #include "commons.h"
 
-#define	NPACKETS	5
 #define IPSERVER	"127.0.0.1"
-#define	ID		"CLIENT=> "
-#define SLEEPDURATION	2
+#define	ID		"CLIENT=> "		// identifies the messages sent to stdout by the client.
+
