@@ -2,11 +2,12 @@
 
 char* timestamp(char* path)
 {
+	int x;
 	struct stat fst;
 	memset((char*) &fst, 0, sizeof(struct stat));
 
-	if(stat(path, &fst))
-		er("stat()", -1);
+	if(x = stat(path, &fst))
+		er("stat()", x);
 	
 	return ctime(&fst.st_mtime);
 }
