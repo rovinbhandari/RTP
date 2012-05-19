@@ -1,0 +1,106 @@
+Simple RTP Client+Server
+========================
+
+Description
+-----------
+RTP stands for Remote Timestamp Protocol. The implementation of RTP
+consists of a client application and a server application; the client
+can ask for the (last modified) timestamp of a file on the remote
+machine while the server satisfies that request.
+RTP uses User Datagram Protocol (UDP) as its transport layer protocol.
+
+High-Level Implementational Details
+-----------------------------------
+The server creates a socket in the internet domain bound to port
+SERVER_PORT. The server receives requests through this port,
+processes the requests and replies to the client which had made the
+request. The client also creates a socket in the internet domain,
+sends requests to SERVER_PORT of a given IP address (i.e., server's
+IP address), and receives replies and displays results obtained from
+the server. The state-machines for a single connection for client and
+server are as the following:
+	Client side protocol state machine:
+		|
+		| begin
+		|
+	    ____V_____
+	    |        | 
+	    | closed |________
+	    |________|        \ startup, request
+		/\             \
+		|               \ 
+		|	         |
+		|           _____V_____
+	done/	|           |         |
+done_acknowledgement        | request |
+		|           |  sent   |
+		|           |_________|
+	        |                |       
+		|                |
+		|                |
+	    ____|____            |
+	    |       |           /
+	    | wait, |          / request_acknowledgement
+	    | done  |/________/
+	    |_______|\
+	
+	Server side protocol state machine:
+		|
+		| begin
+		|
+	    ____V_____
+	    |        | 
+	    | closed |________
+	    |________|        \ request, request_acknowledgement
+		/\             \
+		|               \ 
+		|	         |
+		|           _____V_____
+		|           |         |
+    done_acknowledgement    |   new   |
+		|           | request |
+		|           |_________|
+	        |                |       
+		|                |
+		|                |
+	    ____|____            |
+	    |       |           /
+	    | done  |          / query file timestamp, done
+	    | sent  |/________/
+	    |_______|\
+
+The server handles each client with a separate thread; the main thread
+of the server spawns a new thread at a new incoming request. Since UDP
+is connectionless, the incoming datagrams are matched to their threads
+using connection_id. The threads the server can spawn are bounded by an
+upper limit (i.e., the threads reside in a finite-sized thread pool).
+Threads are not made to wait on spin-waiting loops, conditional-wait
+with mutex has been used to make threads wait and to notify a waiting
+thread. A thread after serving a client goes back to the pool of
+available threads. If the pool of available threads becomes empty at
+some stage and a new incoming request is pending, that request is
+dropped (which is justified since the underlying transport protocol is
+UDP anyway).
+The information between the client and the server is exchanged by means
+of custom packets. A packet has the following fields:
+	1. connection_id
+	   : given by the server if the request is a valid one and
+	     there is at least one thread in the pool of
+	     available threads.
+	2. type
+	   : varies among
+	   	REQU (request)
+		RACK (request_acknowledgement)
+		DONE (done)
+		DACK (done_acknowledgement)
+	3. status
+	   : determines the success or failure of finding the
+	     timestamp of a file.
+	4. buffer
+	   : contains data (garbage value if the packet is
+	     a control packet only).
+Since the byte order of the client, server and the network can all
+vary, the packets are converted to native architecture supported
+byte order when received and to network byte order at the time of
+sending.
+
